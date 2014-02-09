@@ -55,8 +55,10 @@ function apiCall(name) {
   $.ajax({
     url: 'http://api.pipl.com/search/v3/json/?raw_name=' + name + '&key=39udcd3gfy38bf6m6ya6vn7r&pretty=true&callback=parseResponse',
     dataType: 'jsonp',
-    async: false
+    async: false,
+    beforeSend: loadingGif()
   }).done(function(response) {
+    $('#loader').hide()
     json = response;
     makePeople();
     getDisplay();
@@ -65,6 +67,9 @@ function apiCall(name) {
   })
 }
 
+function loadingGif() {
+  $('#loader').show()
+}
 
 function getDisplay(){
   display = new Connections();
