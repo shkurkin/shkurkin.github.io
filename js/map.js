@@ -103,7 +103,8 @@ function getByName(name) {
       connections.all.addConnection(newPerson);
     }
     getGraphData();
-  }).fail(function(){
+  }).fail(function(response){
+    debugger
     console.log("Failed");
   })
 }
@@ -111,7 +112,7 @@ function getByName(name) {
 function getGraphData() {
   for (var i = 0; i < connections.all.length; i++) {
     $.ajax({
-      url: "http://graph.facebook.com/"+
+      url: "https://graph.facebook.com/"+
       connection.all[i].fbId +
       "?fields=picture,name"
     }).done(function(response){
