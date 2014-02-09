@@ -98,7 +98,6 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
-    debugger
     for(var i = 0; i < 10; i++) {
       if(! response.data[i]){
         var newPerson = new Person(response.data[i].id);
@@ -113,10 +112,11 @@ function getByName(name) {
 }
 
 function getGraphData() {
+  debugger
   for (var i = 0; i < connections.all.length; i++) {
     $.ajax({
       url: "https://graph.facebook.com/"+
-      connection.all[i].fbId +
+      connections.all[i].fbId +
       "?fields=picture,name"
     }).done(function(response){
       processGraphData(response)
