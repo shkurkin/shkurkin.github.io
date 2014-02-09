@@ -1,3 +1,5 @@
+connections = new Connections();
+
 $(function(){
   google.maps.event.addDomListener(window, 'load', initialize);
   getGraphData();
@@ -87,38 +89,59 @@ function processName(e){
   getByName(encodedName);
 }
 
-function getGraphData(user_id) {
-  $.ajax({
-    url: "http://graph.facebook.com/1036590399?fields=picture,name"
-  }).done(function(response){
-    processGraphData(response)
-  }).fail(function(){
-    console.log("Request Failed");
-  });
-}
-
-
 function getByName(name) {
   $.ajax({
     url: "https://graph.facebook.com/search?q=" +
       name +
       "&type=user&access_token=" +
      FB.getAccessToken()
-  }).done(function(e){
-    debugger
+  }).done(function(response){
+    for(var i = 0; i < 10; i++) {
+      var newPerson = new Person(response.data[i].id));
+      connections.all.addConnection(newPerson);
+    }
+    getGraphData();
   }).fail(function(){
     console.log("Failed");
   })
 }
 
+function getGraphData() {
+  for (var i = 0; i < connections.all.length; i++) {
+    $.ajax({
+      url: "http://graph.facebook.com/"+
+      connection.all[i].fbId +
+      "?fields=picture,name"
+    }).done(function(response){
+      processGraphData(response)
+    }).fail(function(){
+      console.log("Request Failed");
+    });
+  }
+}
 
 function processGraphData(response) {
-  var latLng = new google.maps.LatLng(0,0);
+  debugger
+  var lat = Math.floor((Math.random()*100)+1);
+  var lng = Math.floor((Math.random()*100)+1);
+  var latLng = new google.maps.LatLng(lat, lng);
   var popup = '<img src="' + response.picture.data.url + '">' +
   '<p>' +  response.name + '</p>';
   addMarker(latLng, popup);
 }
 
+////////////
+// OBJECTS
+///////////
 
-// https://graph.facebook.com/oauth/access_token?client_id=697839106933842&client_secret=ee0d7aec350977e215b54ce6e9856ad6&grant_type=client_cred
-// access_token=697839106933842|PHYWDQwCwbxQtyKuz2sVuDVkbQQ
+function Person(fbId) {
+  this.fbId = fbId
+}
+
+function Connections() {
+  this.all = []
+}
+
+Connections.prototype.addConnection = function(person) {
+  this.all.push(person);
+}
