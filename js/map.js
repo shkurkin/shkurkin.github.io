@@ -2,53 +2,55 @@
 connections = new Connections();
 
 $(function(){
-  google.maps.event.addDomListener(window, 'load', initialize);
+  google.maps.event.addDomListener(window, 'load', initialize());
   makePeople();
-  filterFacebook();
-  allFacebook();
+  // filterFacebook();
+  // allFacebook();
   getDisplay();
+
   $('.name-input').on('submit', function(e){
     e.preventDefault();
-    processName(e);
+    // processName(e);
   });
+});
 
 /////////////
 // FB LOGIN
 /////////////
 
-  window.fbAsyncInit = function() {
-  FB.init({
-    appId      : '697839106933842',
-    status     : true, // check login status
-    cookie     : true, // enable cookies to allow the server to access the session
-    xfbml      : true  // parse XFBML
-  });
-  FB.Event.subscribe('auth.authResponseChange', function(response) {
-    if (response.status === 'connected') {
-      testAPI();
-    } else if (response.status === 'not_authorized') {
-      FB.login();
-    } else {
-      FB.login();
-    }
-  });
-  };
+//   window.fbAsyncInit = function() {
+//   FB.init({
+//     appId      : '697839106933842',
+//     status     : true, // check login status
+//     cookie     : true, // enable cookies to allow the server to access the session
+//     xfbml      : true  // parse XFBML
+//   });
+//   FB.Event.subscribe('auth.authResponseChange', function(response) {
+//     if (response.status === 'connected') {
+//       testAPI();
+//     } else if (response.status === 'not_authorized') {
+//       FB.login();
+//     } else {
+//       FB.login();
+//     }
+//   });
+//   };
 
-  (function(d){
-   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-   if (d.getElementById(id)) {return;}
-   js = d.createElement('script'); js.id = id; js.async = true;
-   js.src = "http://connect.facebook.net/en_US/all.js";
-   ref.parentNode.insertBefore(js, ref);
-  }(document));
+//   (function(d){
+//    var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+//    if (d.getElementById(id)) {return;}
+//    js = d.createElement('script'); js.id = id; js.async = true;
+//    js.src = "http://connect.facebook.net/en_US/all.js";
+//    ref.parentNode.insertBefore(js, ref);
+//   }(document));
 
-  function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Good to see you, ' + response.name + '.');
-    });
-  }
-});
+//   function testAPI() {
+//     console.log('Welcome!  Fetching your information.... ');
+//     FB.api('/me', function(response) {
+//       console.log('Good to see you, ' + response.name + '.');
+//     });
+//   }
+// });
 
 /////////////////
 // GOOGLE MAPS
@@ -64,6 +66,7 @@ function initialize() {
 
 
 function addMarker(latLng, popup) {
+  debugger
   var marker = new google.maps.Marker({
     position: latLng,
     animation: google.maps.Animation.DROP,
@@ -87,11 +90,11 @@ function addInfoWindow(marker, popup) {
 ////////////////
 
 
-function processName(e){
-  var name = $(e.target).find("input").val().toLowerCase();
-  var encodedName = encodeURI(name);
-  getByName(encodedName);
-}
+// function processName(e){
+//   var name = $(e.target).find("input").val().toLowerCase();
+//   var encodedName = encodeURI(name);
+//   getByName(encodedName);
+// }
 
 // function getByName(name) {
 //   $.ajax({
@@ -120,23 +123,32 @@ function getDisplay(){
   display = new Connections();
   for(var i = 0; i < json.records.length; i++){
     if(json.records[i].addresses){
-      display.addConnection(json.records[i].addresses[0].display);
+      var img = '#'
+      if (json.records[i].images) {
+        var img = json.records[i].images[0].url;
+      }
+      info = {
+        map: json.records[i].addresses[0].display,
+        img: img
+      };
+      display.addConnection(info);
     }
   }
 
   for(var i = 0; i < display.all.length; i++){
-    if (display.all[i]) {
+    if (display.all[i].map) {
     $.ajax({
-      url: 'http://maps.googleapis.com/maps/api/geocode/json?address=' + display.all[i] + '&sensor=false'
+      url: 'http://maps.googleapis.com/maps/api/geocode/json?address=' + display.all[i].map + '&sensor=false',
+      async: false
     }).done(function(e){
       if(e.results[0]){
-      var lat = e.results[0].geometry.location.lat;
-      var lng = e.results[0].geometry.location.lng;
-      var latLng = new google.maps.LatLng(lat, lng);
-      var popup = '<p>It works</p>'
-      addMarker(latLng, popup);
-      }
-    })
+        var lat = e.results[0].geometry.location.lat;
+        var lng = e.results[0].geometry.location.lng;
+        var latLng = new google.maps.LatLng(lat, lng);
+        if(display.all[i]){var popup = '<img src="' + display.all[i].img + '" class="embed-img">'}
+        addMarker(latLng, popup);
+        }
+      })
     }
   }
 }
@@ -148,60 +160,60 @@ function makePeople(){
   }
 }
 
-function filterFacebook(){
-  for(var i = 0; i < connections.all; i++){
-    if (connections[i].source.name === "Personal Web Profile - Facebook") {
-      connections[i].addFb(connections[i].user_ids[0]);
-    }
-  }
-}
+// function filterFacebook(){
+//   for(var i = 0; i < connections.all; i++){
+//     if (connections[i].source.name === "Personal Web Profile - Facebook") {
+//       connections[i].addFb(connections[i].user_ids[0]);
+//     }
+//   }
+// }
 
-function allFacebook(){
-  facebook = new Connections();
-  for(var i = 0; i < connections.all; i++){
-    if(connections[i].FbId){
-      facebook.addconnection(connections[i]);
-    }
-  }
-}
+// function allFacebook(){
+//   facebook = new Connections();
+//   for(var i = 0; i < connections.all; i++){
+//     if(connections[i].FbId){
+//       facebook.addconnection(connections[i]);
+//     }
+//   }
+// }
 
-function getGraphData() {
-  for (var i = 0; i < connections.all.length; i++) {
-    $.ajax({
-      url: "https://graph.facebook.com/"+
-      connections.all[i].fbId +
-      "?fields=picture,name,birthday,work,location,photos.limit(10).fields(picture)" +
-      "&access_token=" +
-      FB.getAccessToken()
-    }).done(function(response){
-      processGraphData(response)
-    }).fail(function(){
-      console.log("Request Failed");
-    });
-  }
-}
+// function getGraphData() {
+//   for (var i = 0; i < connections.all.length; i++) {
+//     $.ajax({
+//       url: "https://graph.facebook.com/"+
+//       connections.all[i].fbId +
+//       "?fields=picture,name,birthday,work,location,photos.limit(10).fields(picture)" +
+//       "&access_token=" +
+//       FB.getAccessToken()
+//     }).done(function(response){
+//       processGraphData(response)
+//     }).fail(function(){
+//       console.log("Request Failed");
+//     });
+//   }
+// }
 
-function processGraphData(response) {
-  var lat = Math.floor(Math.random() * 91) - 90;
-  var lng = Math.floor(Math.random() * 181) - 180;
-  if (response.location) {
-    $.ajax({
-      url: 'https://graph.facebook.com/' + response.location.id,
-      type: 'GET',
-      dataType: 'JSON',
-      async: false
-    }).done(function(response){
-      lat = response.location.latitude
-      lng = response.location.longitude
-    }).fail(function(response){
-      debugger
-    })
-  }
-    var latLng = new google.maps.LatLng(lat, lng);
-    var popup = '<img src="' + response.picture.data.url + '">' +
-    '<p>' +  response.name + '</p>';
-    addMarker(latLng, popup);
-}
+// function processGraphData(response) {
+//   var lat = Math.floor(Math.random() * 91) - 90;
+//   var lng = Math.floor(Math.random() * 181) - 180;
+//   if (response.location) {
+//     $.ajax({
+//       url: 'https://graph.facebook.com/' + response.location.id,
+//       type: 'GET',
+//       dataType: 'JSON',
+//       async: false
+//     }).done(function(response){
+//       lat = response.location.latitude
+//       lng = response.location.longitude
+//     }).fail(function(response){
+//       debugger
+//     })
+//   }
+//     var latLng = new google.maps.LatLng(lat, lng);
+//     var popup = '<img src="' + response.picture.data.url + '">' +
+//     '<p>' +  response.name + '</p>';
+//     addMarker(latLng, popup);
+// }
 
 ////////////
 // OBJECTS
