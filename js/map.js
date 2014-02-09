@@ -137,6 +137,7 @@ function processGraphData(response) {
     dataType: 'JSON',
     async: false
   }).done(function(response){
+    debugger
     lat = response.location.latitude
     lng = response.location.longitude
   })
