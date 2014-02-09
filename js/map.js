@@ -120,6 +120,7 @@ function getGraphData() {
       "&access_token=" +
       FB.getAccessToken()
     }).done(function(response){
+      debugger
       processGraphData(response)
     }).fail(function(){
       console.log("Request Failed");
