@@ -100,8 +100,10 @@ function getByName(name) {
   }).done(function(response){
     debugger
     for(var i = 0; i < 10; i++) {
-      var newPerson = new Person(response.data[i].id);
-      connections.all.addConnection(newPerson);
+      if(!response.data[i]){
+        var newPerson = new Person(response.data[i].id);
+        connections.all.addConnection(newPerson);
+      }
     }
     getGraphData();
   }).fail(function(response){
