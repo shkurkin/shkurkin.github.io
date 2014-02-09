@@ -1,8 +1,12 @@
+
 connections = new Connections();
 
 $(function(){
   google.maps.event.addDomListener(window, 'load', initialize);
-  // getGraphData();
+  makePeople();
+  filterFacebook();
+  allFacebook();
+  getDisplay();
   $('.name-input').on('submit', function(e){
     e.preventDefault();
     processName(e);
@@ -110,7 +114,56 @@ function processName(e){
 //   })
 // }
 
-var json = $.getJSON('pipl.json');
+
+
+function getDisplay(){
+  display = new Connections();
+  for(var i = 0; i < json.records.length; i++){
+    if(json.records[i].addresses){
+      display.addConnection(json.records[i].addresses[0].display);
+    }
+  }
+
+  for(var i = 0; i < display.all.length; i++){
+    if (display.all[i]) {
+    $.ajax({
+      url: 'http://maps.googleapis.com/maps/api/geocode/json?address=' + display.all[i] + '&sensor=false'
+    }).done(function(e){
+      if(e.results[0]){
+      var lat = e.results[0].geometry.location.lat;
+      var lng = e.results[0].geometry.location.lng;
+      var latLng = new google.maps.LatLng(lat, lng);
+      var popup = '<p>It works</p>'
+      addMarker(latLng, popup);
+      }
+    })
+    }
+  }
+}
+
+function makePeople(){
+  for(var i = 0; i < json.records.length; i++) {
+    var newPerson = new Person(json.records[i].source);
+    connections.addConnection(newPerson);
+  }
+}
+
+function filterFacebook(){
+  for(var i = 0; i < connections.all; i++){
+    if (connections[i].source.name === "Personal Web Profile - Facebook") {
+      connections[i].addFb(connections[i].user_ids[0]);
+    }
+  }
+}
+
+function allFacebook(){
+  facebook = new Connections();
+  for(var i = 0; i < connections.all; i++){
+    if(connections[i].FbId){
+      facebook.addconnection(connections[i]);
+    }
+  }
+}
 
 function getGraphData() {
   for (var i = 0; i < connections.all.length; i++) {
@@ -154,8 +207,12 @@ function processGraphData(response) {
 // OBJECTS
 ///////////
 
-function Person(fbId) {
-  this.fbId = fbId
+function Person(source) {
+  this.source = source
+}
+
+Person.prototype.addFb = function(FbId) {
+  this.FbId = FbId
 }
 
 function Connections() {

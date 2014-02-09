@@ -1,4 +1,4 @@
-{
+var json = {
     "@http_status_code": 200,
     "@records_count": 156,
     "warnings": [],
