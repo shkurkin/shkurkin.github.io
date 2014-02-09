@@ -22,7 +22,7 @@ $(function(){
 function initialize() {
   var mapOptions = {
     center: new google.maps.LatLng(0, 0),
-    zoom: 2
+    zoom: 4
   };
   map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 }
@@ -79,9 +79,14 @@ function getDisplay(){
       if (json.records[i].images) {
         var img = json.records[i].images[0].url;
       }
+      var name = "anon"
+      if (json.records[i].names){
+        name = json.records[i].names[0].display
+      }
       info = {
         map: json.records[i].addresses[0].display,
-        img: img
+        img: img,
+        name: name
       };
       display.addConnection(info);
     }
@@ -97,7 +102,13 @@ function getDisplay(){
         var lat = e.results[0].geometry.location.lat;
         var lng = e.results[0].geometry.location.lng;
         var latLng = new google.maps.LatLng(lat, lng);
-        if(display.all[i]){var popup = '<img src="' + display.all[i].img + '" class="embed-img">'}
+        if(display.all[i]){
+          if(display.all[i].img != '#'){
+            var popup = '<img src="' + display.all[i].img + '" class="embed-img"><p class="center">' + display.all[i].name + '</p>';
+          } else {
+            var popup = '<p class="center">' + display.all[i].name + '</p>';
+          }
+        }
         addMarker(latLng, popup);
         }
       })
