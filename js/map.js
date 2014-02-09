@@ -96,7 +96,7 @@ function getByName(name) {
     url: "https://graph.facebook.com/search?q=" +
       name +
       "&type=user&access_token=" +
-      FB.getAccessToken()
+      FB.getAccessToken();
   }).done(function(response){
     for(var i = 0; i < 10; i++) {
       if(response.data[i]){
@@ -116,7 +116,9 @@ function getGraphData() {
     $.ajax({
       url: "https://graph.facebook.com/"+
       connections.all[i].fbId +
-      "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)"
+      "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)" +
+      "&access_token=" +
+      FB.getAccessToken();
     }).done(function(response){
       processGraphData(response)
     }).fail(function(){
