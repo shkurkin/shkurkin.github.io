@@ -137,9 +137,10 @@ function processGraphData(response) {
     dataType: 'JSON',
     async: false
   }).done(function(response){
-    debugger
     lat = response.location.latitude
     lng = response.location.longitude
+  }).fail(function(response){
+    debugger
   })
 
   var latLng = new google.maps.LatLng(lat, lng);
