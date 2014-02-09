@@ -25,6 +25,12 @@ body {
   margin: auto;
 }
 
+#loader {
+  display: none;
+  padding-top: 55%;
+  font-size: 40px;
+}
+
 .center {
   text-align: center;
 }
