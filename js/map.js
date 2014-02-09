@@ -116,7 +116,7 @@ function getGraphData() {
     $.ajax({
       url: "https://graph.facebook.com/"+
       connections.all[i].fbId +
-      "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)" +
+      "?fields=picture,name,birthday,work,location,photos.limit(10).fields(picture)" +
       "&access_token=" +
       FB.getAccessToken()
     }).done(function(response){
@@ -131,6 +131,7 @@ function getGraphData() {
 function processGraphData(response) {
   var lat = Math.floor((Math.random()*100)+1)
   var lng = Math.floor((Math.random()*100)+1)
+
   $.ajax({
     url: 'https://graph.facebook.com/' + response.location.id,
     type: 'GET',
