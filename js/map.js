@@ -98,7 +98,7 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
-    for(var i = 0; i < 50; i++) {
+    for(var i = 0; i < 150; i++) {
       if(response.data[i]){
         var newPerson = new Person(response.data[i].id);
         connections.addConnection(newPerson);
@@ -127,9 +127,8 @@ function getGraphData() {
 }
 
 function processGraphData(response) {
-  debugger
-  var lat = Math.floor((Math.random()*150)+1)
-  var lng = Math.floor((Math.random()*150)+1)
+  var lat = Math.floor(Math.random() * 91) - 90;
+  var lng = Math.floor(Math.random() * 181) - 180;
   if (response.location) {
     $.ajax({
       url: 'https://graph.facebook.com/' + response.location.id,
