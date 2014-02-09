@@ -2,7 +2,7 @@ connections = new Connections();
 
 $(function(){
   google.maps.event.addDomListener(window, 'load', initialize);
-  getGraphData();
+  // getGraphData();
   $('.name-input').on('submit', function(e){
     e.preventDefault();
     processName(e);
@@ -101,7 +101,7 @@ function getByName(name) {
     for(var i = 0; i < 10; i++) {
       if(! response.data[i]){
         var newPerson = new Person(response.data[i].id);
-        connections.all.addConnection(newPerson);
+        connections.addConnection(newPerson);
       }
     }
     getGraphData();
