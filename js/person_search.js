@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 function apiCall(name) {
   $.ajax({
-    url: 'http://api.pipl.com/search/v3/json/?raw_name=' + name + '&key=39udcd3gfy38bf6m6ya6vn7r&pretty=true&callback=parseResponse',
+    url: 'http://api.pipl.com/search/v3/json/?raw_name=' + name + '&key=ask_for_key&pretty=true&callback=parseResponse',
     dataType: 'jsonp'
   }).done(function(response) {
     console.log(response)
