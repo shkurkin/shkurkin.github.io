@@ -98,6 +98,7 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
+    debugger
     for(var i = 0; i < 10; i++) {
       var newPerson = new Person(response.data[i].id);
       connections.all.addConnection(newPerson);
