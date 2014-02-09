@@ -96,7 +96,7 @@ function getByName(name) {
     url: "https://graph.facebook.com/search?q=" +
       name +
       "&type=user&access_token=" +
-      FB.getAccessToken();
+      FB.getAccessToken()
   }).done(function(response){
     for(var i = 0; i < 10; i++) {
       if(response.data[i]){
