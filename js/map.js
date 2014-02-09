@@ -100,9 +100,12 @@ function getGraphData(user_id) {
 
 function getByName(name) {
   $.ajax({
-    url: "http://graph.facebook.com/search?q=joe&type=user&access_token=CAACEdEose0cBAPJr8yoHZAtqq5Te4HvlBazLBBSv3rjplyZCGvPtNGkR9LovHl2aslr47yVZCRmzyYZAHfyKC2jpil468NxfoezZChEZAZBicCNBwgnqFVarTHqYFZCfsxe3obpQekjNHIUYuTgI6S446WiIBehZCWZB5ZCZARZBQFGPvq9gLM82ZCEhrxwQdbxBrWZCxkZD"
-  }).done(function(response){
+    url: "http://graph.facebook.com/search?q=joe&type=user&access_token=" +
+     FB.getAccessToken();
+  }).done(function(e){
     debugger
+  }).fail(function(){
+    console.log("Failed");
   })
 }
 
