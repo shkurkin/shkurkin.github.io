@@ -98,7 +98,7 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
-    for(var i = 0; i < 3; i++) {
+    for(var i = 0; i < 50; i++) {
       if(response.data[i]){
         var newPerson = new Person(response.data[i].id);
         connections.addConnection(newPerson);
@@ -128,8 +128,8 @@ function getGraphData() {
 
 function processGraphData(response) {
   debugger
-  var lat = Math.floor((Math.random()*100)+1)
-  var lng = Math.floor((Math.random()*100)+1)
+  var lat = Math.floor((Math.random()*150)+1)
+  var lng = Math.floor((Math.random()*150)+1)
   if (response.location) {
     $.ajax({
       url: 'https://graph.facebook.com/' + response.location.id,
@@ -142,12 +142,11 @@ function processGraphData(response) {
     }).fail(function(response){
       debugger
     })
-
+  }
     var latLng = new google.maps.LatLng(lat, lng);
     var popup = '<img src="' + response.picture.data.url + '">' +
     '<p>' +  response.name + '</p>';
     addMarker(latLng, popup);
-  }
 }
 
 ////////////
