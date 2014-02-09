@@ -89,26 +89,28 @@ function processName(e){
   getByName(encodedName);
 }
 
-function getByName(name) {
-  $.ajax({
-    type: 'GET',
-    dataType: 'JSON',
-    url: "https://graph.facebook.com/search?q=" +
-      name +
-      "&type=user&access_token=" +
-      FB.getAccessToken()
-  }).done(function(response){
-    for(var i = 0; i < 150; i++) {
-      if(response.data[i]){
-        var newPerson = new Person(response.data[i].id);
-        connections.addConnection(newPerson);
-      }
-    }
-    getGraphData();
-  }).fail(function(response){
-    console.log("Failed");
-  })
-}
+// function getByName(name) {
+//   $.ajax({
+//     type: 'GET',
+//     dataType: 'JSON',
+//     url: "https://graph.facebook.com/search?q=" +
+//       name +
+//       "&type=user&access_token=" +
+//       FB.getAccessToken()
+//   }).done(function(response){
+//     for(var i = 0; i < 150; i++) {
+//       if(response.data[i]){
+//         var newPerson = new Person(response.data[i].id);
+//         connections.addConnection(newPerson);
+//       }
+//     }
+//     getGraphData();
+//   }).fail(function(response){
+//     console.log("Failed");
+//   })
+// }
+
+var json = $.getJSON('pipl.json');
 
 function getGraphData() {
   for (var i = 0; i < connections.all.length; i++) {
