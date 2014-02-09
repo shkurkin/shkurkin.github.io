@@ -1,49 +1,18 @@
 connections = new Connections();
 
 $(function(){
-  google.maps.event.addDomListener(window, 'load', initialize);
-  // getGraphData();
-  $('.name-input').on('submit', function(e){
+  google.maps.event.addDomListener(window, 'load', initialize());
+
+  $('.submit-name').on('submit', function(e){
     e.preventDefault();
-    processName(e);
+    var mapOptions = {
+      center: new google.maps.LatLng(0, 0),
+      zoom: 2
+    };
+    map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    name = $(this).find('input').val();
+    apiCall(name);
   });
-
-/////////////
-// FB LOGIN
-/////////////
-
-  window.fbAsyncInit = function() {
-  FB.init({
-    appId      : '697839106933842',
-    status     : true, // check login status
-    cookie     : true, // enable cookies to allow the server to access the session
-    xfbml      : true  // parse XFBML
-  });
-  FB.Event.subscribe('auth.authResponseChange', function(response) {
-    if (response.status === 'connected') {
-      testAPI();
-    } else if (response.status === 'not_authorized') {
-      FB.login();
-    } else {
-      FB.login();
-    }
-  });
-  };
-
-  (function(d){
-   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-   if (d.getElementById(id)) {return;}
-   js = d.createElement('script'); js.id = id; js.async = true;
-   js.src = "http://connect.facebook.net/en_US/all.js";
-   ref.parentNode.insertBefore(js, ref);
-  }(document));
-
-  function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Good to see you, ' + response.name + '.');
-    });
-  }
 });
 
 /////////////////
@@ -78,71 +47,76 @@ function addInfoWindow(marker, popup) {
   });
 }
 
-////////////////
-// FACEBOOK API
-////////////////
+//////////////
+// PIPL API
+//////////////
 
-
-function processName(e){
-  var name = $(e.target).find("input").val().toLowerCase();
-  var encodedName = encodeURI(name);
-  getByName(encodedName);
-}
-
-function getByName(name) {
+function apiCall(name) {
   $.ajax({
-    type: 'GET',
-    dataType: 'JSON',
-    url: "https://graph.facebook.com/search?q=" +
-      name +
-      "&type=user&access_token=" +
-      FB.getAccessToken()
-  }).done(function(response){
-    for(var i = 0; i < 10; i++) {
-      if(response.data[i]){
-        var newPerson = new Person(response.data[i].id);
-        connections.addConnection(newPerson);
-      }
-    }
-    getGraphData();
-  }).fail(function(response){
-    debugger
+    url: 'http://api.pipl.com/search/v3/json/?raw_name=' + name + '&key=39udcd3gfy38bf6m6ya6vn7r&pretty=true&callback=parseResponse',
+    dataType: 'jsonp',
+    async: false
+  }).done(function(response) {
+    json = response;
+    makePeople();
+    getDisplay();
+  }).fail(function() {
     console.log("Failed");
   })
 }
 
-function getGraphData() {
-  for (var i = 0; i < connections.all.length; i++) {
+
+function getDisplay(){
+  display = new Connections();
+  for(var i = 0; i < json.records.length; i++){
+    if(json.records[i].addresses){
+      var img = '#'
+      if (json.records[i].images) {
+        var img = json.records[i].images[0].url;
+      }
+      info = {
+        map: json.records[i].addresses[0].display,
+        img: img
+      };
+      display.addConnection(info);
+    }
+  }
+
+  for(var i = 0; i < display.all.length; i++){
+    if (display.all[i].map) {
     $.ajax({
-      url: "https://graph.facebook.com/"+
-      connections.all[i].fbId +
-      "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)" +
-      "&access_token=" +
-      FB.getAccessToken();
-    }).done(function(response){
-      processGraphData(response)
-    }).fail(function(){
-      console.log("Request Failed");
-    });
+      url: 'http://maps.googleapis.com/maps/api/geocode/json?address=' + display.all[i].map + '&sensor=false',
+      async: false
+    }).done(function(e){
+      if(e.results[0]){
+        var lat = e.results[0].geometry.location.lat;
+        var lng = e.results[0].geometry.location.lng;
+        var latLng = new google.maps.LatLng(lat, lng);
+        if(display.all[i]){var popup = '<img src="' + display.all[i].img + '" class="embed-img">'}
+        addMarker(latLng, popup);
+        }
+      })
+    }
   }
 }
 
-function processGraphData(response) {
-  debugger
-  var lat = Math.floor((Math.random()*100)+1);
-  var lng = Math.floor((Math.random()*100)+1);
-  var latLng = new google.maps.LatLng(lat, lng);
-  var popup = '<img src="' + response.picture.data.url + '">' +
-  '<p>' +  response.name + '</p>';
-  addMarker(latLng, popup);
+function makePeople(){
+  for(var i = 0; i < json.records.length; i++) {
+    var newPerson = new Person(json.records[i].source);
+    connections.addConnection(newPerson);
+  }
 }
 
 ////////////
 // OBJECTS
 ///////////
 
-function Person(fbId) {
-  this.fbId = fbId
+function Person(source) {
+  this.source = source
+}
+
+Person.prototype.addFb = function(FbId) {
+  this.FbId = FbId
 }
 
 function Connections() {
