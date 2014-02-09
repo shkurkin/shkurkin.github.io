@@ -112,12 +112,11 @@ function getByName(name) {
 }
 
 function getGraphData() {
-  debugger
   for (var i = 0; i < connections.all.length; i++) {
     $.ajax({
       url: "https://graph.facebook.com/"+
       connections.all[i].fbId +
-      "?fields=picture,name"
+      "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)"
     }).done(function(response){
       processGraphData(response)
     }).fail(function(){
