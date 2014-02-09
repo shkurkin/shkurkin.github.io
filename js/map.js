@@ -98,7 +98,7 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 300; i++) {
       if(response.data[i]){
         var newPerson = new Person(response.data[i].id);
         connections.addConnection(newPerson);
@@ -131,23 +131,24 @@ function getGraphData() {
 function processGraphData(response) {
   var lat = Math.floor((Math.random()*100)+1)
   var lng = Math.floor((Math.random()*100)+1)
+  if (response.location.id) {
+    $.ajax({
+      url: 'https://graph.facebook.com/' + response.location.id,
+      type: 'GET',
+      dataType: 'JSON',
+      async: false
+    }).done(function(response){
+      lat = response.location.latitude
+      lng = response.location.longitude
+    }).fail(function(response){
+      debugger
+    })
 
-  $.ajax({
-    url: 'https://graph.facebook.com/' + response.location.id,
-    type: 'GET',
-    dataType: 'JSON',
-    async: false
-  }).done(function(response){
-    lat = response.location.latitude
-    lng = response.location.longitude
-  }).fail(function(response){
-    debugger
-  })
-
-  var latLng = new google.maps.LatLng(lat, lng);
-  var popup = '<img src="' + response.picture.data.url + '">' +
-  '<p>' +  response.name + '</p>';
-  addMarker(latLng, popup);
+    var latLng = new google.maps.LatLng(lat, lng);
+    var popup = '<img src="' + response.picture.data.url + '">' +
+    '<p>' +  response.name + '</p>';
+    addMarker(latLng, popup);
+  }
 }
 
 ////////////
