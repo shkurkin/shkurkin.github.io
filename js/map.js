@@ -118,7 +118,7 @@ function getGraphData() {
       connections.all[i].fbId +
       "?fields=picture,name,birthday,work,photos.limit(10).fields(picture)" +
       "&access_token=" +
-      FB.getAccessToken();
+      FB.getAccessToken()
     }).done(function(response){
       processGraphData(response)
     }).fail(function(){
