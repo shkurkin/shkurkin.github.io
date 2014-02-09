@@ -91,10 +91,12 @@ function processName(e){
 
 function getByName(name) {
   $.ajax({
+    type: 'GET',
+    dataType: 'JSON',
     url: "https://graph.facebook.com/search?q=" +
       name +
       "&type=user&access_token=" +
-     FB.getAccessToken()
+      FB.getAccessToken()
   }).done(function(response){
     for(var i = 0; i < 10; i++) {
       var newPerson = new Person(response.data[i].id);
