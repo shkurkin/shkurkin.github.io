@@ -99,7 +99,7 @@ function getByName(name) {
       FB.getAccessToken()
   }).done(function(response){
     for(var i = 0; i < 10; i++) {
-      if(! response.data[i]){
+      if(response.data[i]){
         var newPerson = new Person(response.data[i].id);
         connections.addConnection(newPerson);
       }
