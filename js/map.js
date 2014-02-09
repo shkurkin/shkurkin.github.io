@@ -106,7 +106,6 @@ function getByName(name) {
     }
     getGraphData();
   }).fail(function(response){
-    debugger
     console.log("Failed");
   })
 }
@@ -120,7 +119,6 @@ function getGraphData() {
       "&access_token=" +
       FB.getAccessToken()
     }).done(function(response){
-      debugger
       processGraphData(response)
     }).fail(function(){
       console.log("Request Failed");
@@ -132,7 +130,7 @@ function processGraphData(response) {
   debugger
   var lat = Math.floor((Math.random()*100)+1)
   var lng = Math.floor((Math.random()*100)+1)
-  if (response.location.id) {
+  if (response.location) {
     $.ajax({
       url: 'https://graph.facebook.com/' + response.location.id,
       type: 'GET',
