@@ -128,9 +128,18 @@ function getGraphData() {
 }
 
 function processGraphData(response) {
-  debugger
-  var lat = Math.floor((Math.random()*100)+1);
-  var lng = Math.floor((Math.random()*100)+1);
+  var lat = Math.floor((Math.random()*100)+1)
+  var lng = Math.floor((Math.random()*100)+1)
+  $.ajax({
+    url: 'https://graph.facebook.com/' + response.location.id,
+    type: 'GET',
+    dataType: 'JSON',
+    async: false
+  }).done(function(response){
+    lat = response.location.latitude
+    lng = response.location.longitude
+  })
+
   var latLng = new google.maps.LatLng(lat, lng);
   var popup = '<img src="' + response.picture.data.url + '">' +
   '<p>' +  response.name + '</p>';
