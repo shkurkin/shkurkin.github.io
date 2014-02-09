@@ -98,7 +98,7 @@ function getByName(name) {
       "&type=user&access_token=" +
       FB.getAccessToken()
   }).done(function(response){
-    for(var i = 0; i < 300; i++) {
+    for(var i = 0; i < 3; i++) {
       if(response.data[i]){
         var newPerson = new Person(response.data[i].id);
         connections.addConnection(newPerson);
@@ -129,6 +129,7 @@ function getGraphData() {
 }
 
 function processGraphData(response) {
+  debugger
   var lat = Math.floor((Math.random()*100)+1)
   var lng = Math.floor((Math.random()*100)+1)
   if (response.location.id) {
