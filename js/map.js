@@ -100,7 +100,7 @@ function getGraphData(user_id) {
 
 function getByName(name) {
   $.ajax({
-    url: "http://graph.facebook.com/search?q=joe&type=user&access_token=" +
+    url: "https://graph.facebook.com/search?q=joe&type=user&access_token=" +
      FB.getAccessToken()
   }).done(function(e){
     debugger
